@@ -1,0 +1,24 @@
+version: "2"
+services:
+  haproxy:
+    build: .
+    image: haproxy_mongo:0.1.0
+    container_name: haproxy_mongo
+    ports:
+    - "27017:27017"
+    - "1936:1936"
+    environment:
+      STATS_AUTH: "admin:admin"
+    volumes:
+    - "./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
+    - "/dev/log:/dev/log"
+    external_links:
+    - dmzhost_database_1
+    - dmzhost_database_2
+    - dmzhost_database_3
+    logging:
+      driver: json-file
+networks:
+  default:
+    external:
+      name: dmzhost_default
