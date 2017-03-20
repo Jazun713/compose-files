@@ -1,0 +1,21 @@
+version: "2"
+services:
+  haproxy_rc:
+    image: haproxy:1.7.3
+    container_name: haproxy_rc
+    ports:
+    - "80:3000"
+    - "1936:1936"
+    environment:
+      STATS_AUTH: "admin:admin"
+    volumes:
+    - "./haproxy_rc.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
+    - "/dev/log:/dev/log"
+    external_links:
+    - dmzhost_rocketchat_1
+    - dmzhost_rocketchat_2
+    - dmzhost_rocketchat_3
+networks:
+  default:
+    external:
+      name: dmzhost_default
