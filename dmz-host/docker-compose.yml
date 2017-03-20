@@ -1,0 +1,89 @@
+version: '2'
+
+services:
+  database_1:
+    image: mongo:3.2.9
+    container_name: dmzhost_database_1
+    ports:
+    - 28017:27017
+    volumes:
+    - "/mnt/docker_rocketchat/data:/data/db"
+    - "/mnt/docker_rocketchat/dump:/dump"
+    command: mongod --replSet rs --rest --httpinterface --smallfiles
+
+  database_2:
+    image: mongo:3.2.9
+    container_name: dmzhost_database_2
+    ports:
+    - 29017:27017
+    volumes:
+    - "/mnt/docker_rocketchat/data_2:/data/db"
+    - "/mnt/docker_rocketchat/dump:/dump"
+    command: mongod --replSet rs --rest --httpinterface --smallfiles
+
+  database_3:
+    image: mongo:3.2.9
+    container_name: dmzhost_database_3
+    ports:
+    - 30017:27017
+    volumes:
+    - "/mnt/docker_rocketchat/data_3:/data/db"
+    - "/mnt/docker_rocketchat/dump:/dump"
+    command: mongod --replSet rs --rest --httpinterface --smallfiles
+
+  devchat_1:
+    image: rocketchat/rocket.chat:0.50.1
+    container_name: dmzhost_devchat_1
+    ports:
+    - 3101:3000
+    volumes:
+    - "../logo.svg:/logo.svg"
+    environment:
+    - "ADMIN_PASS=$ADMIN_PASS"
+    - "LDAP_Domain_Search_Password=$LDAP_PASS"
+    env_file:
+    - ./rcsettings.env
+    external_links:
+    - dmzhost_database_1
+    - dmzhost_database_2
+    - dmzhost_database_3
+
+  devchat_2:
+    image: rocketchat/rocket.chat:0.50.1
+    container_name: dmzhost_devchat_2
+    ports:
+    - 3102:3000
+    volumes:
+    - "../logo.svg:/logo.svg"
+    environment:
+    - "ADMIN_PASS=$ADMIN_PASS"
+    - "LDAP_Domain_Search_Password=$LDAP_PASS"
+    env_file:
+    - ./rcsettings.env
+    external_links:
+    - dmzhost_database_1
+    - dmzhost_database_2
+    - dmzhost_database_3
+
+  devchat_3:
+    image: rocketchat/rocket.chat:0.50.1
+    container_name: dmzhost_devchat_3
+    ports:
+    - 3103:3000
+    volumes:
+    - "../logo.svg:/logo.svg"
+    environment:
+    - "ADMIN_PASS=$ADMIN_PASS"
+    - "LDAP_Domain_Search_Password=$LDAP_PASS"
+    env_file:
+    - ./rcsettings.env
+    external_links:
+    - dmzhost_database_1
+    - dmzhost_database_2
+    - dmzhost_database_3
+
+  replicator:
+    build: ../replicator
+    environment:
+    - "mongoHostname=database"
+    - "waitTime=5"

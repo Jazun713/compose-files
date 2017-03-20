@@ -4,8 +4,8 @@ services:
     image: haproxy:1.7.3
     container_name: haproxy_rc
     ports:
-    - "80:3000"
-    - "1936:1936"
+    - "8080:3000"
+    - "1937:1936"
     environment:
       STATS_AUTH: "admin:admin"
     volumes:
